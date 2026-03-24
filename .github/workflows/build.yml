@@ -1,0 +1,95 @@
+name: Build Vulkan Outline Mod
+
+on:
+  push:
+    branches: [ main, master ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:  # bisa trigger manual dari tab Actions
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout kode
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            .gradle
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      - name: Beri permission ke gradlew
+        run: chmod +x gradlew
+
+      - name: Build mod
+        run: ./gradlew build --no-daemon
+
+      - name: Upload hasil build sebagai artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vulkan-outline-mod
+          path: build/libs/*[^-sources].jar
+          retention-days: 30
+
+  # Job ini hanya jalan kalau kamu push tag seperti v1.0.0
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Checkout kode
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle.properties') }}
+
+      - name: Beri permission ke gradlew
+        run: chmod +x gradlew
+
+      - name: Build mod
+        run: ./gradlew build --no-daemon
+
+      - name: Buat GitHub Release otomatis
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/libs/*[^-sources].jar
+          generate_release_notes: true
+          name: "Vulkan Outline ${{ github.ref_name }}"
+          body: |
+            ## Vulkan Outline Mod ${{ github.ref_name }}
+            
+            ### Cara Install:
+            1. Download file `.jar` di bawah
+            2. Taruh di folder `.minecraft/mods/`
+            3. Pastikan sudah ada: **VulkanMod 0.6.1** + **Fabric API** + **Fabric Loader 0.18.1**
+            4. Jalankan Minecraft 1.21.11 dengan profil Fabric
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
