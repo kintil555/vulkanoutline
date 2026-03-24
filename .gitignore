@@ -1,0 +1,20 @@
+# Gradle
+.gradle/
+build/
+out/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.classpath
+*.project
+*.settings/
+
+# Fabric Loom cache
+.loom-cache/
+run/
+
+# OS
+.DS_Store
+Thumbs.db
