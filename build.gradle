@@ -5,7 +5,10 @@ plugins {
 
 version = project.mod_version
 group = project.maven_group
-archivesBaseName = project.archives_base_name
+
+base {
+    archivesName = project.archives_base_name
+}
 
 repositories {
     maven { url 'https://maven.fabricmc.net/' }
@@ -14,15 +17,9 @@ repositories {
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-
-    // 1.21.11 pakai Mojang Mappings (bukan Yarn lagi)
     mappings loom.officialMojangMappings()
-
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-
-    // VulkanMod 0.6.1 untuk 1.21.11 - compile only
-    // User tetap install VulkanMod sendiri di mods folder
     modCompileOnly 'maven.modrinth:vulkanmod:1.21.11-0.6.1'
 }
 
