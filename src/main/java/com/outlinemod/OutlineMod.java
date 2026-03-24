@@ -13,12 +13,14 @@ public class OutlineMod implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        LOGGER.info("[VulkanOutline] Mod loaded untuk Minecraft 1.21.11 + VulkanMod 0.6.1");
+        LOGGER.info("[VulkanOutline] Loaded untuk Minecraft 1.21.11 + VulkanMod");
 
-        // Daftarkan event setelah world render selesai
-        // supaya outline pass bisa dijalankan di atasnya
+        // WorldRenderEvents.AFTER_TRANSLUCENT masih tersedia di 1.21.11
+        // tapi context-nya pakai tickCounter bukan tickDelta
         WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> {
-            OutlinePostChain.getInstance().renderIfActive();
+            OutlinePostChain.getInstance().renderIfActive(
+                context.tickCounter().getGameTimeDeltaPartialTick(true)
+            );
         });
     }
 }
