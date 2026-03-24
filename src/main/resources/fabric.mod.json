@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "vulkan-outline",
+  "version": "${version}",
+  "name": "Vulkan Outline",
+  "description": "Adds outline post-processing shader support to VulkanMod for Minecraft 1.21.11",
+  "authors": ["You"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.outlinemod.OutlineMod"
+    ]
+  },
+  "mixins": [
+    "vulkan-outline.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.18.1",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "vulkanmod": "*"
+  }
+}
