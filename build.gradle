@@ -12,7 +12,28 @@ base {
 
 repositories {
     maven { url 'https://maven.fabricmc.net/' }
-    maven { url 'https://api.modrinth.com/maven' }
+
+    // Modrinth Maven (Fabric API dll)
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Modrinth'
+                url = 'https://api.modrinth.com/maven'
+            }
+        }
+        filter { includeGroup 'maven.modrinth' }
+    }
+
+    // CurseMaven untuk VulkanMod
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'CurseMaven'
+                url = 'https://cursemaven.com'
+            }
+        }
+        filter { includeGroup 'curse.maven' }
+    }
 }
 
 dependencies {
@@ -20,7 +41,10 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-    modCompileOnly 'maven.modrinth:vulkanmod:1.21.11-0.6.1'
+
+    // VulkanMod 0.5.8 untuk 1.21.11 via CurseMaven
+    // ID file: 7468946 (VulkanMod_1.21.11-0.5.8.jar)
+    modCompileOnly 'curse.maven:vulkanmod-635429:7468946'
 }
 
 processResources {
